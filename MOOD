@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>心情驿站 🌈 - 匿名心情记录系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        /* 应用容器 */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-icon {
+            font-size: 40px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 12px;
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .storage-info {
+            margin-top: auto;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-icon {
+            font-size: 28px;
+        }
+
+        .info-text {
+            font-size: 12px;
+            line-height: 1.4;
+            opacity: 0.8;
+        }
+
+        .info-detail {
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px 40px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 页面头部 */
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        /* 心情追踪器 */
+        .mood-tracker {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .mood-card, .mood-form {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .mood-score-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .score-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .score-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .score-range {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .mood-chart-section {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .tag-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .tag-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .tag-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* 按钮样式 */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+        }
+
+        /* 小白板样式 */
+        .board-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .drawing-section, .text-section, .comments-section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            color: #2d3748;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .color-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .size-control {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .drawing-canvas {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+            cursor: crosshair;
+            margin-bottom: 15px;
+            width: 100%;
+            height: auto;
+        }
+
+        .drawing-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .quick-moods {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .quick-mood {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-mood:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        .text-input {
+            margin-bottom: 15px;
+        }
+
+        .post-count {
+            font-size: 12px;
+            color: #718096;
+            background: #e2e8f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* 帖子样式 */
+        .posts-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .post-card {
+            background: #f7fafc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .post-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .post-user-icon {
+            font-size: 20px;
+        }
+
+        .post-user-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .post-type {
+            font-size: 12px;
+            color: #718096;
+            background: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+        }
+
+        .post-text {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .post-mood {
+            font-size: 32px;
+        }
+
+        .post-message {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .post-image {
+            max-width: 100%;
+            border-radius: 12px;
+            margin: 10px 0;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .comment-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .comments-list {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .comment-item {
+            padding: 8px 0;
+            font-size: 13px;
+            color: #4a5568;
+        }
+
+        .comment-user {
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: #a0aec0;
+            margin-left: 8px;
+        }
+
+        /* 历史记录 */
+        .history-container {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .history-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            background: #f7fafc;
+            margin-bottom: 12px;
+            border-radius: 8px;
+        }
+
+        .history-date {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .history-score {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: #2d3748;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #a0aec0;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .original-post {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .mood-select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .color-text-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .color-text-btn:hover {
+            border-color: #667eea;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 20px;
+            }
+
+            .nav-menu {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .nav-item {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .storage-info {
+                margin-top: 20px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .mood-tracker {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🌈</div>
+                <div class="logo-text">心情驿站</div>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-tab="mood">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">心情记录</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="board">
+                    <span class="nav-icon">🎨</span>
+                    <span class="nav-text">小白板</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="history">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-text">历史记录</span>
+                </a>
+            </nav>
+
+            <div class="storage-info">
+                <div class="info-icon">💾</div>
+                <div class="info-text">
+                    <div>数据保留3天</div>
+                    <div class="info-detail">自动清理旧数据</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 心情记录页面 -->
+            <div class="tab-content active" id="mood-tab">
+                <div class="page-header">
+                    <h1>今日心情</h1>
+                    <p>记录当下的情绪，让心情可视化</p>
+                </div>
+
+                <div class="mood-tracker">
+                    <div class="mood-card">
+                        <div class="mood-score-section">
+                            <div class="score-label">心情分数</div>
+                            <div class="score-value" id="moodScore">50</div>
+                            <input type="range" id="scoreSlider" min="0" max="100" value="50" class="score-slider">
+                            <div class="score-range">
+                                <span>😔 低落</span>
+                                <span>😐 平静</span>
+                                <span>😊 开心</span>
+                            </div>
+                        </div>
+
+                        <div class="mood-chart-section">
+                            <canvas id="moodChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="mood-form">
+                        <div class="form-group">
+                            <label>心情标签</label>
+                            <div class="tag-buttons">
+                                <button class="tag-btn" data-mood="开心">😊 开心</button>
+                                <button class="tag-btn" data-mood="平静">😌 平静</button>
+                                <button class="tag-btn" data-mood="忧伤">😔 忧伤</button>
+                                <button class="tag-btn" data-mood="生气">😠 生气</button>
+                                <button class="tag-btn" data-mood="兴奋">🎉 兴奋</button>
+                                <button class="tag-btn" data-mood="疲惫">😴 疲惫</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>备注</label>
+                            <textarea id="moodNote" placeholder="写下你的心情故事..." rows="4"></textarea>
+                        </div>
+
+                        <button class="btn-primary" id="saveMoodBtn">
+                            <span>💾</span> 保存今日心情
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 小白板页面 -->
+            <div class="tab-content" id="board-tab">
+                <div class="page-header">
+                    <h1>匿名小白板</h1>
+                    <p>自由表达，匿名分享你的心情</p>
+                </div>
+
+                <div class="board-container">
+                    <div class="drawing-section">
+                        <div class="section-header">
+                            <h2>🎨 绘画区</h2>
+                            <div class="toolbar">
+                                <div class="color-picker">
+                                    <label>颜色</label>
+                                    <div class="color-buttons">
+                                        <button class="color-btn" data-color="#000000" style="background: #000000;"></button>
+                                        <button class="color-btn" data-color="#FF4444" style="background: #FF4444;"></button>
+                                        <button class="color-btn" data-color="#44FF44" style="background: #44FF44;"></button>
+                                        <button class="color-btn" data-color="#4444FF" style="background: #4444FF;"></button>
+                                        <button class="color-btn" data-color="#FF44FF" style="background: #FF44FF;"></button>
+                                        <button class="color-btn" data-color="#FFA500" style="background: #FFA500;"></button>
+                                    </div>
+                                </div>
+                                <div class="size-control">
+                                    <label>粗细</label>
+                                    <input type="range" id="penSize" min="1" max="20" value="3">
+                                </div>
+                                <button class="btn-secondary" id="clearCanvas">
+                                    🗑️ 清除
+                                </button>
+                            </div>
+                        </div>
+                        <canvas id="drawingCanvas" width="800" height="300" class="drawing-canvas"></canvas>
+                        <div class="drawing-actions">
+                            <button class="btn-primary" id="postDrawingBtn">
+                                📢 发布绘画
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-section">
+                        <div class="section-header">
+                            <h2>📝 文字心情区</h2>
+                        </div>
+                        <div class="quick-moods">
+                            <button class="quick-mood" data-mood="😊">😊</button>
+                            <button class="quick-mood" data-mood="😌">😌</button>
+                            <button class="quick-mood" data-mood="😔">😔</button>
+                            <button class="quick-mood" data-mood="😠">😠</button>
+                            <button class="quick-mood" data-mood="🎉">🎉</button>
+                            <button class="quick-mood" data-mood="💕">💕</button>
+                        </div>
+                        <textarea id="textMood" placeholder="写下你的心情..." rows="3" class="text-input"></textarea>
+                        <button class="btn-primary" id="postTextBtn">
+                            💬 发布文字心情
+                        </button>
+                    </div>
+
+                    <div class="comments-section">
+                        <div class="section-header">
+                            <h2>💬 评论区</h2>
+                            <span class="post-count" id="postCount">0 条心情</span>
+                        </div>
+                        <div id="postsContainer" class="posts-container">
+                            <!-- 动态加载帖子 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 历史记录页面 -->
+            <div class="tab-content" id="history-tab">
+                <div class="page-header">
+                    <h1>历史记录</h1>
+                    <p>查看过去一周的心情变化</p>
+                </div>
+
+                <div class="history-container">
+                    <div class="history-actions">
+                        <button class="btn-secondary" id="generateReportBtn">
+                            📊 生成周报
+                        </button>
+                        <button class="btn-danger" id="clearAllBtn">
+                            🧹 清空所有数据
+                        </button>
+                    </div>
+
+                    <div class="history-list" id="historyList">
+                        <!-- 动态加载历史记录 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 评论弹窗 -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💬 发表评论</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="original-post" id="originalPost"></div>
+                <textarea id="commentText" placeholder="写下你的评论..." rows="4"></textarea>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="anonymousComment" checked> 匿名评论
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelComment">取消</button>
+                <button class="btn-primary" id="submitComment">发布评论</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文字发布弹窗 -->
+    <div id="textModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 发布文字心情</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>选择心情</label>
+                    <select id="textMoodSelect" class="mood-select">
+                        <option value="😊 开心">😊 开心</option>
+                        <option value="😌 平静">😌 平静</option>
+                        <option value="😔 忧伤">😔 忧伤</option>
+                        <option value="😠 生气">😠 生气</option>
+                        <option value="🎉 兴奋">🎉 兴奋</option>
+                        <option value="😴 疲惫">😴 疲惫</option>
+                        <option value="💕 心动">💕 心动</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>文字内容</label>
+                    <textarea id="textContent" placeholder="写下你的心情..." rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>文字颜色</label>
+                    <div class="color-buttons">
+                        <button class="color-text-btn" data-color="black" style="color: black;">黑色</button>
+                        <button class="color-text-btn" data-color="red" style="color: red;">红色</button>
+                        <button class="color-text-btn" data-color="blue" style="color: blue;">蓝色</button>
+                        <button class="color-text-btn" data-color="green" style="color: green;">绿色</button>
+                        <button class="color-text-btn" data-color="purple" style="color: purple;">紫色</button>
+                        <button class="color-text-btn" data-color="pink" style="color: pink;">粉色</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelText">取消</button>
+                <button class="btn-primary" id="submitText">发布</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 应用状态
+        let appState = {
+            moodRecords: {},
+            posts: [],
+            currentMood: 50,
+            currentTag: '平静',
+            nextId: 1,
+            drawingCanvas: null,
+            drawingCtx: null,
+            isDrawing: false,
+            penColor: '#000000',
+            penSize: 3,
+            lastX: 0,
+            lastY: 0
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            initEventListeners();
+            initDrawingCanvas();
+            initMoodChart();
+            updatePostsDisplay();
+            updateHistoryDisplay();
+            updatePostCount();
+        });
+
+        // 加载数据
+        function loadData() {
+            const savedMoods = localStorage.getItem('mood_records');
+            if (savedMoods) {
+                appState.moodRecords = JSON.parse(savedMoods);
+            }
+
+            const savedPosts = localStorage.getItem('posts');
+            if (savedPosts) {
+                appState.posts = JSON.parse(savedPosts);
+                appState.nextId = Math.max(...appState.posts.map(p => p.id), 0) + 1;
+            }
+
+            cleanupOldData();
+        }
+
+        // 保存数据
+        function saveData() {
+            localStorage.setItem('mood_records', JSON.stringify(appState.moodRecords));
+            localStorage.setItem('posts', JSON.stringify(appState.posts));
+            updatePostCount();
+        }
+
+        // 清理超过3天的数据
+        function cleanupOldData() {
+            const threeDaysAgo = new Date();
+            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+            for (const [date, record] of Object.entries(appState.moodRecords)) {
+                if (new Date(record.timestamp) < threeDaysAgo) {
+                    delete appState.moodRecords[date];
+                }
+            }
+
+            appState.posts = appState.posts.filter(post => new Date(post.timestamp) >= threeDaysAgo);
+            saveData();
+        }
+
+        // 初始化事件监听
+        function initEventListeners() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tab = item.dataset.tab;
+                    switchTab(tab);
+                });
+            });
+
+            const scoreSlider = document.getElementById('scoreSlider');
+            const moodScore = document.getElementById('moodScore');
+            scoreSlider.addEventListener('input', (e) => {
+                const value = e.target.value;
+                moodScore.textContent = value;
+                appState.currentMood = parseInt(value);
+                updateMoodChart();
+            });
+
+            document.querySelectorAll('.tag-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    appState.currentTag = btn.dataset.mood;
+                });
+            });
+
+            if (document.querySelector('.tag-btn')) {
+                document.querySelector('.tag-btn').classList.add('active');
+                appState.currentTag = document.querySelector('.tag-btn').dataset.mood;
+            }
+
+            document.getElementById('saveMoodBtn').addEventListener('click', saveMood);
+            document.getElementById('postDrawingBtn').addEventListener('click', postDrawing);
+            document.getElementById('postTextBtn').addEventListener('click', () => openTextModal());
+
+            document.querySelectorAll('.quick-mood').forEach(btn => {
+                btn.addEventListener('click', () => quickPost(btn.dataset.mood));
+            });
+
+            document.getElementById('generateReportBtn').addEventListener('click', generateReport);
+            document.getElementById('clearAllBtn').addEventListener('click', clearAllData);
+            document.getElementById('clearCanvas').addEventListener('click', clearCanvas);
+
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    appState.penColor = btn.dataset.color;
+                });
+            });
+
+            document.getElementById('penSize').addEventListener('input', (e) => {
+                appState.penSize = parseInt(e.target.value);
+            });
+        }
+
+        // 初始化绘画画布
+        function initDrawingCanvas() {
+            const canvas = document.getElementById('drawingCanvas');
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            appState.drawingCanvas = canvas;
+            appState.drawingCtx = canvas.getContext('2d');
+            appState.drawingCtx.fillStyle = 'white';
+            appState.drawingCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let isDrawing = false;
+            let lastX = 0, lastY = 0;
+
+            canvas.addEventListener('mousedown', (e) => {
+                isDrawing = true;
+                const pos = getMousePos(canvas, e);
+                lastX = pos.x;
+                lastY = pos.y;
+                appState.drawingCtx.beginPath();
+                appState.drawingCtx.moveTo(lastX, lastY);
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                const pos = getMousePos(canvas, e);
+                appState.drawingCtx.strokeStyle = appState.penColor;
+                appState.drawingCtx.lineWidth = appState.penSize;
+                appState.drawingCtx.lineCap = 'round';
+                appState.drawingCtx.lineJoin = 'round';
+                appState.drawingCtx.lineTo(pos.x, pos.y);
+                appState.drawingCtx.stroke();
+                appState.drawingCtx.beginPath();
+                appState.drawingCtx.moveTo(pos.x, pos.y);
+                lastX = pos.x;
+                lastY = pos.y;
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                isDrawing = false;
+                appState.drawingCtx.beginPath();
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                isDrawing = false;
+                appState.drawingCtx.beginPath();
+            });
+        }
+
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (evt.clientX - rect.left) * (canvas.width / rect.width),
+                y: (evt.clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        function clearCanvas() {
+            appState.drawingCtx.fillStyle = 'white';
+            appState.drawingCtx.fillRect(0, 0, appState.drawingCanvas.width, appState.drawingCanvas.height);
+        }
+
+        function saveMood() {
+            const today = new Date().toISOString().split('T')[0];
+            const note = document.getElementById('moodNote').value;
+
+            appState.moodRecords[today] = {
+                date: today,
+                score: appState.currentMood,
+                label: appState.currentTag,
+                note: note,
+                timestamp: new Date().toISOString()
+            };
+
+            saveData();
+            updateHistoryDisplay();
+            document.getElementById('moodNote').value = '';
+            alert('心情记录已保存！');
+        }
+
+        function postDrawing() {
+            const canvas = appState.drawingCanvas;
+            const imageData = canvas.toDataURL('image/png');
+
+            const post = {
+                id: appState.nextId++,
+                user: `用户${Math.floor(Math.random() * 9000) + 1000}`,
+                time: new Date().toLocaleString(),
+                imageData: imageData,
+                type: 'drawing',
+                anonymous: true,
+                comments: [],
+                timestamp: new Date().toISOString()
+            };
+
+            appState.posts.unshift(post);
+            saveData();
+            updatePostsDisplay();
+            clearCanvas();
+            alert('绘画发布成功！');
+        }
+
+        function postText(textData) {
+            const post = {
+                id: appState.nextId++,
+                user: `用户${Math.floor(Math.random() * 9000) + 1000}`,
+                time: new Date().toLocaleString(),
+                type: 'text',
+                text: textData.text,
+                mood: textData.mood,
+                color: textData.color,
+                anonymous: true,
+                comments: [],
+                timestamp: new Date().toISOString()
+            };
+
+            appState.posts.unshift(post);
+            saveData();
+            updatePostsDisplay();
+            alert('文字心情发布成功！');
+        }
+
+        function quickPost(mood) {
+            const post = {
+                id: appState.nextId++,
+                user: `用户${Math.floor(Math.random() * 9000) + 1000}`,
+                time: new Date().toLocaleString(),
+                type: 'text',
+                text: `今天心情 ${mood}`,
+                mood: mood,
+                color: 'black',
+                anonymous: true,
+                comments: [],
+                timestamp: new Date().toISOString()
+            };
+
+            appState.posts.unshift(post);
+            saveData();
+            updatePostsDisplay();
+        }
+
+        function addComment(postId, commentText, isAnonymous) {
+            const post = appState.posts.find(p => p.id === postId);
+            if (post) {
+                post.comments.push({
+                    user: isAnonymous ? '匿名用户' : `用户${Math.floor(Math.random() * 9000) + 1000}`,
+                    text: commentText,
+                    time: new Date().toLocaleTimeString(),
+                    anonymous: isAnonymous,
+                    timestamp: new Date().toISOString()
+                });
+                saveData();
+                updatePostsDisplay();
+                alert('评论发布成功！');
+            }
+        }
+
+        function updatePostsDisplay() {
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = '';
+
+            appState.posts.slice(0, 30).forEach(post => {
+                const postCard = createPostCard(post);
+                container.appendChild(postCard);
+            });
+        }
+
+        function createPostCard(post) {
+            const div = document.createElement('div');
+            div.className = 'post-card';
+
+            const header = document.createElement('div');
+            header.className = 'post-header';
+            header.innerHTML = `
+                <div class="post-user">
+                    <span class="post-user-icon">👤</span>
+                    <span class="post-user-name">${post.anonymous ? '匿名用户' : post.user}</span>
+                </div>
+                <div class="post-time">${post.time}</div>
+                <div class="post-type">${post.type === 'text' ? '📝 文字心情' : '🎨 绘画'}</div>
+            `;
+            div.appendChild(header);
+
+            const content = document.createElement('div');
+            content.className = 'post-content';
+
+            if (post.type === 'text') {
+                content.innerHTML = `
+                    <div class="post-text">
+                        <span class="post-mood">${post.mood}</span>
+                        <span class="post-message" style="color: ${post.color}">${escapeHtml(post.text)}</span>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `<img src="${post.imageData}" class="post-image" alt="绘画作品">`;
+            }
+            div.appendChild(content);
+
+            const actions = document.createElement('div');
+            actions.className = 'post-actions';
+            const commentBtn = document.createElement('button');
+            commentBtn.className = 'comment-btn';
+            commentBtn.innerHTML = '💬 评论';
+            commentBtn.onclick = () => openCommentModal(post);
+            actions.appendChild(commentBtn);
+            div.appendChild(actions);
+
+            if (post.comments && post.comments.length > 0) {
+                const commentsDiv = document.createElement('div');
+                commentsDiv.className = 'comments-list';
+                post.comments.slice(-5).forEach(comment => {
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'comment-item';
+                    commentDiv.innerHTML = `
+                        <span class="comment-user">${comment.anonymous ? '匿名用户' : comment.user}:</span>
+                        <span>${escapeHtml(comment.text)}</span>
+                        <span class="comment-time">${comment.time}</span>
+                    `;
+                    commentsDiv.appendChild(commentDiv);
+                });
+                div.appendChild(commentsDiv);
+            }
+
+            return div;
+        }
+
+        let currentPostId = null;
+        function openCommentModal(post) {
+            currentPostId = post.id;
+            const modal = document.getElementById('commentModal');
+            const originalPost = document.getElementById('originalPost');
+
+            if (post.type === 'text') {
+                originalPost.innerHTML = `${post.mood} ${escapeHtml(post.text)}`;
+            } else {
+                originalPost.innerHTML = '🎨 绘画作品';
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function openTextModal() {
+            const modal = document.getElementById('textModal');
+            modal.style.display = 'flex';
+
+            document.querySelectorAll('.color-text-btn').forEach(btn => {
+                btn.style.border = '2px solid #e2e8f0';
+            });
+            document.querySelector('.color-text-btn').style.border = '2px solid #667eea';
+        }
+
+        function generateReport() {
+            const weekData = [];
+            const today = new Date();
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+
+                if (appState.moodRecords[dateStr]) {
+                    weekData.push(appState.moodRecords[dateStr]);
+                }
+            }
+
+            if (weekData.length === 0) {
+                alert('本周暂无数据');
+                return;
+            }
+
+            const scores = weekData.map(d => d.score);
+            const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const maxScore = Math.max(...scores);
+            const minScore = Math.min(...scores);
+
+            let summary = '';
+            if (avgScore >= 80) summary = '这周心情超棒！继续保持积极心态！🌟';
+            else if (avgScore >= 60) summary = '总体心情不错，偶尔有小波动也很正常 😊';
+            else if (avgScore >= 40) summary = '心情起伏较大，记得照顾好自己 💕';
+            else summary = '这周可能有点艰难，给自己一些温暖和关爱 🌈';
+
+            alert(`本周心情报告\n\n记录天数: ${weekData.length} 天\n平均心情: ${avgScore.toFixed(1)}\n最高心情: ${maxScore}\n最低心情: ${minScore}\n\n${summary}`);
+        }
+
+        function clearAllData() {
+            if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
+                appState.moodRecords = {};
+                appState.posts = [];
+                appState.nextId = 1;
+                saveData();
+                updateHistoryDisplay();
+                updatePostsDisplay();
+                updatePostCount();
+                alert('所有数据已清空');
+            }
+        }
+
+        function updateHistoryDisplay() {
+            const container = document.getElementById('historyList');
+            container.innerHTML = '';
+
+            const records = Object.values(appState.moodRecords).sort((a, b) =>
+                new Date(b.date) - new Date(a.date)
+            );
+
+            records.slice(0, 7).forEach(record => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div class="history-date">${record.date}</div>
+                    <div>心情分数: <span class="history-score">${record.score}°</span></div>
+                    <div>标签: ${record.label}</div>
+                    <div>备注: ${record.note || '无'}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updatePostCount() {
+            const countSpan = document.getElementById('postCount');
+            if (countSpan) {
+                countSpan.textContent = `${appState.posts.length} 条心情`;
+            }
+        }
+
+        let moodChart = null;
+        function initMoodChart() {
+            const canvas = document.getElementById('moodChart');
+            if (!canvas) return;
+
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+            updateMoodChart();
+        }
+
+        function updateMoodChart() {
+            const canvas = document.getElementById('moodChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const score = appState.currentMood;
+            const barHeight = (score / 100) * height;
+
+            ctx.fillStyle = '#f7fafc';
+            ctx.fillRect(0, 0, width, height);
+
+            const gradient = ctx.createLinearGradient(0, height - barHeight, 0, height);
+            if (score >= 80) gradient.addColorStop(0, '#00b894');
+            else if (score >= 60) gradient.addColorStop(0, '#6c5ce7');
+            else if (score >= 40) gradient.addColorStop(0, '#fdcb6e');
+            else gradient.addColorStop(0, '#ff8b94');
+            gradient.addColorStop(1, '#a8e6cf');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(width/2 - 30, height - barHeight, 60, barHeight);
+
+            ctx.strokeStyle = '#cbd5e0';
+            ctx.strokeRect(width/2 - 30, 0, 60, height);
+
+            ctx.fillStyle = '#2d3748';
+            ctx.font = 'bold 14px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${score}°`, width/2, height - barHeight - 5);
+
+            for (let i = 0; i <= 100; i += 20) {
+                const y = height - (i / 100) * height;
+                ctx.beginPath();
+                ctx.moveTo(width/2 - 40, y);
+                ctx.lineTo(width/2 - 30, y);
+                ctx.stroke();
+                ctx.fillStyle = '#718096';
+                ctx.font = '10px Inter';
+                ctx.fillText(`${i}`, width/2 - 45, y + 3);
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tab}-tab`).classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+            if (tab === 'board') {
+                setTimeout(() => {
+                    const canvas = document.getElementById('drawingCanvas');
+                    if (canvas) {
+                        const rect = canvas.getBoundingClientRect();
+                        canvas.width = rect.width;
+                        canvas.height = rect.height;
+                        appState.drawingCtx.fillStyle = 'white';
+                        appState.drawingCtx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                }, 100);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 评论弹窗事件
+        document.getElementById('submitComment')?.addEventListener('click', () => {
+            const comment = document.getElementById('commentText').value;
+            const isAnonymous = document.getElementById('anonymousComment').checked;
+
+            if (comment.trim()) {
+                addComment(currentPostId, comment, isAnonymous);
+                document.getElementById('commentModal').style.display = 'none';
+                document.getElementById('commentText').value = '';
+            } else {
+                alert('请输入评论内容');
+            }
+        });
+
+        document.getElementById('cancelComment')?.addEventListener('click', () => {
+            document.getElementById('commentModal').style.display = 'none';
+            document.getElementById('commentText').value = '';
+        });
+
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('commentModal').style.display = 'none';
+                document.getElementById('textModal').style.display = 'none';
+            });
+        });
+
+        document.getElementById('submitText')?.addEventListener('click', () => {
+            const mood = document.getElementById('textMoodSelect').value;
+            const text = document.getElementById('textContent').value;
+            const selectedColor = document.querySelector('.color-text-btn[style*="border"]');
+            const color = selectedColor ? selectedColor.dataset.color : 'black';
+
+            if (text.trim()) {
+                postText({
+                    text: text,
+                    mood: mood,
+                    color: color
+                });
+                document.getElementById('textModal').style.display = 'none';
+                document.getElementById('textContent').value = '';
+            } else {
+                alert('请输入文字内容');
+            }
+        });
+
+        document.getElementById('cancelText')?.addEventListener('click', () => {
+            document.getElementById('textModal').style.display = 'none';
+            document.getElementById('textContent').value = '';
+        });
+
+        document.querySelectorAll('.color-text-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.color-text-btn').forEach(b => {
+                    b.style.border = '2px solid #e2e8f0';
+                });
+                btn.style.border = '2px solid #667eea';
+            });
+        });
+
+        window.addEventListener('click', (e) => {
+            const commentModal = document.getElementById('commentModal');
+            const textModal = document.getElementById('textModal');
+            if (e.target === commentModal) {
+                commentModal.style.display = 'none';
+            }
+            if (e.target === textModal) {
+                textModal.style.display = 'none';
+            }
+        });
+
+        setInterval(() => {
+            cleanupOldData();
+            updateHistoryDisplay();
+            updatePostsDisplay();
+            updatePostCount();
+        }, 3600000);
+    </script>
+</body>
+</html>
